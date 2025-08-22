@@ -7,21 +7,21 @@ from users.models import UserModel
 @admin.register(UserModel)
 class UserAdmin(admin.ModelAdmin):
     list_display = (
-        "name",
-        "surname",
+        "first_name",
+        "last_name",
         "email",
         "is_active",
         "role",
     )
     list_display_links = (
-        "name",
-        "surname",
+        "first_name",
+        "last_name",
         "email",
         "is_active",
         "role",
     )
     search_fields = (
-        "name",
-        "surname",
+        "first_name",
+        "last_name",
         "email",
     )

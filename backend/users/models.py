@@ -13,37 +13,12 @@ from effictivemobile.constants import (
 class UserModel(AbstractUser):
     """Кастомная модель пользователя."""
 
-    first_name = models.CharField(
-        max_length=NAME_MAX_LENGTH,
-        verbose_name="Имя пользователя",
-        help_text="Введите имя пользователя",
-    )
-    last_name = models.CharField(
-        max_length=NAME_MAX_LENGTH,
-        verbose_name="Фамилия пользователя",
-        help_text="Введите фамилию пользователя",
-    )
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["first_name", "last_name"]
     email = models.EmailField(
         verbose_name="Адрес электронной почты",
         help_text="Введите адрес электронной почты",
-    )
-    password = models.CharField(
-        max_length=PASSWORD_MAX_LENGTH,
-        verbose_name="Пароль",
-        help_text="Введите пароль",
-    )
-    passord_again = models.CharField(
-        max_length=PASSWORD_MAX_LENGTH,
-        verbose_name="Повтор пароля",
-        help_text="Повторное введите пароль",
-    )
-    registation_date = models.DateField(
-        auto_now_add=True,
-        verbose_name="Дата регистрации пользователя",
-    )
-    is_active = models.BooleanField(
-        verbose_name="Информация об активности аккаунта",
-        default=True,
+        unique=True,
     )
     role = models.CharField(
         choices=USERS_ROLE,
@@ -57,13 +32,13 @@ class UserModel(AbstractUser):
         verbose_name_plural = "Пользователи"
 
     def __str__(self):
-        return f"{self.name} {self.surname}"
+        return f"{self.first_name} {self.last_name}"
 
     def is_admin(self):
-        return self.role == self.ADMIN or self.is_superuser
+        return self.role == ADMIN or self.is_superuser
 
     def is_moderator(self):
-        return self.role == self.MODERATOR
+        return self.role == MODERATOR
 
     def is_user(self):
-        return self.role == self.USER
+        return self.role == USER
