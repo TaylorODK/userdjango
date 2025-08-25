@@ -7,7 +7,7 @@ from users.models import UserModel
 
 class UserCreateSerializer(serializers.ModelSerializer):
     """
-    Сериализатор обновления данных о пользователе (имя и фамилия).
+    Сериализатор создания нового пользователя.
     """
 
     password = serializers.CharField(write_only=True)
@@ -28,18 +28,12 @@ class UserCreateSerializer(serializers.ModelSerializer):
         password = data.get("password")
         repeat_password = data.get("repeat_password")
         if password != repeat_password:
-            raise serializers.ValidationError(
-                "Введите дважды одинаковый пароль"
-            )
+            raise serializers.ValidationError("Введите дважды одинаковый пароль")
         try:
             validate_password(password)
         except ValidationError as e:
             raise serializers.ValidationError(
-                {
-                    "Пароль не соответствует требования безопасности": list(
-                        e.messages
-                    )
-                }
+                {"Пароль не соответствует требования безопасности": list(e.messages)}
             )
         return data
 
@@ -50,28 +44,50 @@ class UserCreateSerializer(serializers.ModelSerializer):
             first_name=validated_data.get("first_name"),
             last_name=validated_data.get("last_name"),
             email=validated_data.get("email"),
-            password=password
+            password=password,
         )
         return user
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):
     """
-    Сериализатор обновления данных о пользователе (имя и фамилия).
+    Сериализатор обновления данных о пользователе (имя, фамилия, почта).
     """
 
     class Meta:
         model = UserModel
-        fields = ("id", "first_name", "last_name",)
+        fields = ("id", "first_name", "last_name", "email")
 
-    def validate(self, data):
-        email = data.get("email")
-        password = data.get("password")
-        user = UserModel.objects.get(email=email)
-        if not user:
-            raise ValidationError({"Пользователя не существует"})
-        try:
-            user.check_password(password)
-        except ValidationError:
-            raise ValidationError({"Неверный пароль"})
-        return data
+    def validate(self, value):
+        user = self.instance
+        if UserModel.objects.exclude(pk=user.pk).filter(email=value).exists():
+            raise ValidationError({"Адрес электронной почты занят"})
+        return value
+
+
+class UserDeleteSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор мягкого удаления пользователя.
+    """
+
+    class Meta:
+        model = UserModel
+        fields = ("id", "email", "password")
+
+    def validate_current_password(self, value):
+        user = self.instance
+        if not user.check_password(value):
+            raise serializers.ValidationError("Неверный пароль")
+        return value
+
+    def update(self, instance, validated_data):
+        instance.is_active = False
+        instance.save(update_fields=["is_active"])
+        return instance
+
+
+class UserLoginSerizlier(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserModel
+        fields = ("id", "email", "password")

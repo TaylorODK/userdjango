@@ -1,6 +1,7 @@
 # Константы для наименований
 NAME_MAX_LENGTH = 255
-PASSWORD_MAX_LENGTH = 255
+PRICE_MAX_DIGITS = 7
+PRICE_DECIMAL_PLACES = 2
 
 # Наименование ролей пользователя
 USER = "user"

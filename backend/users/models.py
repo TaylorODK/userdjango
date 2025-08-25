@@ -2,11 +2,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from effictivemobile.constants import (
     NAME_MAX_LENGTH,
-    PASSWORD_MAX_LENGTH,
-    USERS_ROLE,
-    USER,
-    MODERATOR,
-    ADMIN,
 )
 
 
@@ -20,11 +15,11 @@ class UserModel(AbstractUser):
         help_text="Введите адрес электронной почты",
         unique=True,
     )
-    role = models.CharField(
-        choices=USERS_ROLE,
-        default=USER,
-        verbose_name="Роль пользователя",
-        help_text="Данные о роли пользователя (user по-умолчанию)",
+    role = models.ForeignKey(
+        "Role",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
     )
 
     class Meta:
@@ -34,11 +29,87 @@ class UserModel(AbstractUser):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
-    def is_admin(self):
-        return self.role == ADMIN or self.is_superuser
+    def is_role_slug(self):
+        return self.role.slug if self.role else "guest"
 
-    def is_moderator(self):
-        return self.role == MODERATOR
 
-    def is_user(self):
-        return self.role == USER
+class Role(models.Model):
+    name = models.CharField(
+        max_length=NAME_MAX_LENGTH,
+        verbose_name="Наименование роли",
+        unique=True,
+    )
+    slug = models.SlugField(
+        max_length=NAME_MAX_LENGTH,
+        verbose_name="Слаг",
+        unique=True,
+    )
+    description = models.TextField(
+        verbose_name="Описание роли",
+    )
+
+    class Meta:
+        verbose_name = "Роль"
+        verbose_name_plural = "Роли"
+
+
+class BusinessElements(models.Model):
+    name = models.CharField(
+        max_length=NAME_MAX_LENGTH,
+        verbose_name="Наименование ресурса",
+        unique=True,
+    )
+    slug = models.SlugField(
+        max_length=NAME_MAX_LENGTH,
+        verbose_name="Слаг",
+        unique=True,
+    )
+    description = models.TextField(verbose_name="Описание ресурса")
+
+
+class AccessRolesRules(models.Model):
+    role = models.ForeignKey(
+        Role,
+        on_delete=models.CASCADE,
+    )
+    element = models.ForeignKey(
+        BusinessElements,
+        on_delete=models.CASCADE,
+    )
+    read_permission = models.BooleanField(
+        verbose_name="Доступ для чтения собственного объекта модели",
+        default=False,
+    )
+    read_all_permission = models.BooleanField(
+        verbose_name="Доступ для чтения всех объектов модели",
+        default=False,
+    )
+    create_permission = models.BooleanField(
+        verbose_name="Доступ для создания объекта модели",
+        default=False,
+    )
+    update_permission = models.BooleanField(
+        verbose_name="Возможность редактирования собственного объекта модели",
+        default=False,
+    )
+    update_all_permission = models.BooleanField(
+        verbose_name="Возможность редактирования всех объектов модели",
+        default=False,
+    )
+    delete_permission = models.BooleanField(
+        verbose_name="Возможность удаления собственного объекта модели",
+        default=False,
+    )
+    delete_all_permission = models.BooleanField(
+        verbose_name="Возможность удаления всех объектов модели",
+        default=False,
+    )
+
+    class Meta:
+        verbose_name = "Доступ"
+        verbose_name_plural = "Доступы"
+
+    def __str__(self):
+        return (
+            f"Доступ роли '{self.role.name}' к объекту '{self.element.name}'."
+        )
