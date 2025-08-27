@@ -2,7 +2,12 @@ from django.http import Http404
 from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
-from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, ListModelMixin
+from rest_framework.mixins import (
+    CreateModelMixin,
+    RetrieveModelMixin,
+    UpdateModelMixin,
+    ListModelMixin,
+)
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
@@ -35,13 +40,18 @@ class UserViewSet(viewsets.ModelViewSet):
     Также авторизованным пользователям доступна возможность просмотра
     доступов к моделям по ссылке me/permissions/{наименование модели}
     """
+
     queryset = UserModel.objects.all()
     serializer_class = UserShowSerializer
 
     def get_permissions(self):
         if self.action == "create":
-            return [AllowAny(),]
-        return [UserPermission(),]
+            return [
+                AllowAny(),
+            ]
+        return [
+            UserPermission(),
+        ]
 
     def create(self, request):
         serializer = UserCreateSerializer(data=request.data)
@@ -54,8 +64,10 @@ class UserViewSet(viewsets.ModelViewSet):
                 {
                     "Success": True,
                     "Message": "Пользователь успешно создан.",
-                    "Data": serializer.data
-                }, status=status.HTTP_201_CREATED)
+                    "Data": serializer.data,
+                },
+                status=status.HTTP_201_CREATED,
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(
@@ -77,23 +89,21 @@ class UserViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_404_NOT_FOUND,
                 )
             return Response(
-                    {
-                        "Success": True,
-                        "Message": "Предоставлены данные пользователя.",
-                        "Data": serializer.data
-                    },
-                    status=status.HTTP_200_OK,
-                )
-        serializer = UserUpdateSerializer(
-            user, data=request.data, partial=True
-        )
+                {
+                    "Success": True,
+                    "Message": "Предоставлены данные пользователя.",
+                    "Data": serializer.data,
+                },
+                status=status.HTTP_200_OK,
+            )
+        serializer = UserUpdateSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(
                 {
                     "Success": True,
                     "Message": "Данные пользователя успешно изменены.",
-                    "Data": serializer.data
+                    "Data": serializer.data,
                 },
                 status=status.HTTP_200_OK,
             )
@@ -101,28 +111,21 @@ class UserViewSet(viewsets.ModelViewSet):
             {
                 "Success": False,
                 "Message": "Ошибка смены данных пользователя",
-                "Data": serializer.errors
+                "Data": serializer.errors,
             },
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    @action(
-        detail=False,
-        methods=["patch"],
-        url_path="me/delete"
-    )
+    @action(detail=False, methods=["patch"], url_path="me/delete")
     def delete_user(self, request):
         user = self.request.user
-        serializer = UserDeleteSerializer(
-            user, data=request.data, partial=True
-        )
+        serializer = UserDeleteSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(
                 {
                     "Success": True,
-                    "Message": "Пользователь удален.",
-                    "Data": serializer.data
+                    "Message": "Пользователь удален."
                 },
                 status=status.HTTP_200_OK,
             )
@@ -130,7 +133,7 @@ class UserViewSet(viewsets.ModelViewSet):
             {
                 "Success": False,
                 "Message": "Ошибка удаления пользователя",
-                "Data": serializer.errors
+                "Data": serializer.errors,
             },
             status=status.HTTP_400_BAD_REQUEST,
         )
@@ -146,44 +149,38 @@ class UserViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             serializer.save()
             return Response(
-                {
-                    "Success": True,
-                    "Message": "Пароль изменен."
-                },
+                {"Success": True, "Message": "Пароль изменен."},
                 status=status.HTTP_200_OK,
             )
         return Response(
             {
                 "Success": False,
                 "Message": "Ошибка смена пароля",
-                "Data": serializer.errors
+                "Data": serializer.errors,
             },
             status=status.HTTP_400_BAD_REQUEST,
         )
 
     @action(
-        detail=False,
-        methods=["GET"],
-        url_path=r"me/permissions/(?P<model_name>[^/.]+)"
+        detail=False, methods=["GET"], url_path=r"me/permissions/(?P<model_name>[^/.]+)"
     )
     def me_permissions(self, request, model_name):
         user = self.request.user
         try:
-            access = AccessRolesRule.objects.get(role=user.role, element__slug=model_name)
+            access = AccessRolesRule.objects.get(
+                role=user.role, element__slug=model_name
+            )
         except AccessRolesRule.DoesNotExist:
             return Response(
-                {
-                    "Success": False,
-                    "Message": "Данные о правах доступа не обнаружены."
-                }
+                {"Success": False, "Message": "Данные о правах доступа не обнаружены."}
             )
         serializer = AccessShowSerializer(access)
         if serializer:
             return Response(
                 {
                     "Success": True,
-                    "Message": "Пользователь удален.",
-                    "Data": serializer.data
+                    "Message": "Данные о правах доступа предоставлены.",
+                    "Data": serializer.data,
                 },
                 status=status.HTTP_200_OK,
             )

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from drf_spectacular.utils import extend_schema_field
 from api.models import Order, Product
-from codescommanders.constants import PRICE_MAX_DIGITS, PRICE_DECIMAL_PLACES
+from effictivemobile.constants import PRICE_MAX_DIGITS, PRICE_DECIMAL_PLACES
 import datetime
 
 
@@ -12,15 +12,11 @@ class OrderSerializer(serializers.ModelSerializer):
     products = serializers.PrimaryKeyRelatedField(
         queryset=Product.objects.all(), many=True
     )
-    slug = serializers.SlugField(read_only=True)
     price = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
         fields = (
-            "name",
-            "slug",
-            "description",
             "user",
             "date_order",
             "products",
@@ -43,7 +39,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         request = self.context.get("request")
-        products = validated_data.pop("product", [])
+        products = validated_data.pop("products", [])
         order = Order.objects.create(**validated_data, user=request.user)
-        order.product.set(products)
+        order.products.set(products)
         return order

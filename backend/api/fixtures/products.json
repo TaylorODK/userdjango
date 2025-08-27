@@ -1,0 +1,62 @@
+[
+{
+  "model": "api.product",
+  "pk": 1,
+  "fields": {
+    "name": "Морковка",
+    "slug": "morkovka",
+    "description": "описание морковки",
+    "price": "100.00"
+  }
+},
+{
+  "model": "api.product",
+  "pk": 2,
+  "fields": {
+    "name": "Картошка",
+    "slug": "kartoshka",
+    "description": "описание картошки",
+    "price": "90.00"
+  }
+},
+{
+  "model": "api.product",
+  "pk": 3,
+  "fields": {
+    "name": "Перец",
+    "slug": "perec",
+    "description": "описание перца",
+    "price": "200.00"
+  }
+},
+{
+  "model": "api.product",
+  "pk": 4,
+  "fields": {
+    "name": "Лук",
+    "slug": "luk",
+    "description": "описание лука",
+    "price": "10.00"
+  }
+},
+{
+  "model": "api.product",
+  "pk": 5,
+  "fields": {
+    "name": "Помидор",
+    "slug": "pomidor",
+    "description": "описание помидора",
+    "price": "150.00"
+  }
+},
+{
+  "model": "api.product",
+  "pk": 6,
+  "fields": {
+    "name": "Огурец",
+    "slug": "ogurec",
+    "description": "описание огурца",
+    "price": "350.00"
+  }
+}
+]

@@ -9,10 +9,6 @@ router.register("", UserViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
-    path(
-        "auth/login/", TokenObtainPairView.as_view(), name="login"
-    ),
-    path(
-        "auth/refresh/", TokenRefreshView.as_view(), name="refresh"
-    ),
+    path("auth/login/", TokenObtainPairView.as_view(), name="login"),
+    path("auth/refresh/", TokenRefreshView.as_view(), name="refresh"),
 ]

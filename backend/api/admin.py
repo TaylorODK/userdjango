@@ -8,9 +8,12 @@ from .models import Order, Product
 class OrderAdmin(admin.ModelAdmin):
     """Класс для включения в админку модели Order."""
 
-    list_display = ("name", "description", "user", "date_order")
+    list_display = ("user", "date_order", "total_price")
     search_fields = ("user",)
-    prepopulated_fields = {"slug": ("name",)}
+
+    @admin.display(description="Цена заказа")
+    def total_price(self, obj):
+        return obj.total_price()
 
 
 @admin.register(Product)

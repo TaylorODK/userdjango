@@ -9,7 +9,7 @@ def create_business_elements(apps, schema_editor):
     """
     BusinessElement = apps.get_model("users", "BusinessElement")
 
-    for model in apps.get_models():
+    for model in apps.get_app_config("api").get_models():
         model_name = model._meta.verbose_name.title()
         model_slug = model._meta.model_name
 

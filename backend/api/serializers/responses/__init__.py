@@ -10,12 +10,6 @@ from api.serializers.responses.product import (
     ProductErrorResponseSerializer,
 )
 
-# Response пользователей
-from api.serializers.responses.users import (
-    UserCreateResponseSerializer,
-    UserResponseSerializer,
-    UserErrorResponseSerializer,
-)
 
 # flake8: noqa
 # ruff: noqa

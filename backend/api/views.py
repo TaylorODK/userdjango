@@ -5,7 +5,6 @@ from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from drf_spectacular.utils import extend_schema
 from .models import Order, Product
 from .serializers import OrderSerializer, ProductSerializer
-from .permissions import AuthorPermission
 from .schemas import (
     order_content_schema,
     product_content_schema,
@@ -18,7 +17,6 @@ from .schemas import (
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
-    permission_classes = (AuthorPermission,)
     serializer_class = OrderSerializer
 
     @order_create_schema
@@ -30,25 +28,17 @@ class OrderViewSet(viewsets.ModelViewSet):
         return super().retrieve(request, *args, **kwargs)
 
 
-@product_content_schema
-class ProductListViewSet(ListModelMixin, GenericViewSet):
-    queryset = Product.objects.all()
-    permission_classes = (AllowAny,)
-    serializer_class = ProductSerializer
-
-
-class ProductViewSet(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
+class ProductViewSet(RetrieveModelMixin, CreateModelMixin, ListModelMixin, GenericViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    lookup_field = "slug"
 
     def get_permissions(self):
-        if self.action == "retrieve":
+        if self.action == "create":
             return [
-                IsAuthenticated,
+                IsAdminUser(),
             ]
         return [
-            IsAdminUser,
+            AllowAny(),
         ]
 
     @product_content_schema
@@ -58,3 +48,7 @@ class ProductViewSet(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
     @product_create_schema
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
+
+    @product_content_schema
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)

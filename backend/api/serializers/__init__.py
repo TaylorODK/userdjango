@@ -4,9 +4,6 @@ from api.serializers.models import (
     OrderSerializer,
     # Продукты
     ProductSerializer,
-    # Пользователи
-    UserSerializer,
-    UserCreateSerializer,
 )
 
 # Response сериализаторы
@@ -17,10 +14,6 @@ from api.serializers.responses import (
     # Продукты
     ProductResponseSerializer,
     ProductErrorResponseSerializer,
-    # Пользователи
-    UserCreateResponseSerializer,
-    UserResponseSerializer,
-    UserErrorResponseSerializer,
 )
 
 # flake8: noqa

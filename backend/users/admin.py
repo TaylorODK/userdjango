@@ -27,7 +27,20 @@ class UserAdmin(admin.ModelAdmin):
         "last_name",
         "email",
     )
-
+    fieldsets = (
+        (
+            "Основная информация",
+            {"fields": ("email", "first_name", "last_name", "username")},
+        ),
+        (
+            "Статус профиля",
+            {"fields": ("is_active",)},
+        ),
+        (
+            "Роль пользователя",
+            {"fields": ("role",)},
+        ),
+    )
 
 @admin.register(Role)
 class RoleAdmin(admin.ModelAdmin):

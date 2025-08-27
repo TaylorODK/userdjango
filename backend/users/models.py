@@ -9,17 +9,29 @@ class UserModel(AbstractUser):
     """Кастомная модель пользователя."""
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["first_name", "last_name", "username"]
+    REQUIRED_FIELDS = ["first_name", "last_name"]
     email = models.EmailField(
         verbose_name="Адрес электронной почты",
         help_text="Введите адрес электронной почты",
         unique=True,
+    )
+    username = models.CharField(
+        verbose_name="Имя пользователя",
+        max_length=NAME_MAX_LENGTH,
+        unique=False,
     )
     role = models.ForeignKey("Role", on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=('username', 'email'),
+                name='unique_user'
+            )
+        ]
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -48,6 +60,9 @@ class Role(models.Model):
     class Meta:
         verbose_name = "Роль"
         verbose_name_plural = "Роли"
+
+    def __str__(self):
+        return f"{self.name}"
 
 
 class BusinessElement(models.Model):

@@ -37,23 +37,13 @@ class Product(AutoSlugMixin, models.Model):
         verbose_name = "Продукт"
         verbose_name_plural = "Продукты"
 
+    def __str__(self):
+        return f"Продукт {self.name}, стоимостью {self.price} рублей."
 
-class Order(AutoSlugMixin, models.Model):
+
+class Order(models.Model):
     """Модель заказа."""
 
-    name = models.CharField(
-        max_length=NAME_MAX_LENGTH,
-        blank=False,
-        verbose_name="Наименование заказа",
-        help_text=f"Максимальная длина наименования {NAME_MAX_LENGTH}",
-    )
-    slug = models.SlugField(
-        max_length=NAME_MAX_LENGTH,
-        blank=True,
-        verbose_name="Слаг заказа",
-        help_text="Слаг автоматически генерируется на основании поля name",
-    )
-    description = models.TextField(blank=True, verbose_name="Описание заказа")
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=False)
     date_order = models.DateField(
         blank=False,
@@ -66,9 +56,9 @@ class Order(AutoSlugMixin, models.Model):
     class Meta:
         verbose_name = "Заказ"
         verbose_name_plural = "Заказы"
-        constraints = [
-            models.UniqueConstraint(fields=("name", "user"), name="unique_order")
-        ]
 
     def __str__(self):
-        return f"{self.name}"
+        return f"Заказ {self.user}"
+
+    def total_price(self):
+        return sum(product.price for product in self.products.all())

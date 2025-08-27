@@ -2,7 +2,7 @@ from rest_framework.permissions import BasePermission
 
 
 class UserPermission(BasePermission):
-    """"
+    """ "
     Разрешения для операций с моделью пользователей.
     Разрешается просмотр/редактирование/пользователей,
     а также просмотр списка пользователей для администраторов.
@@ -10,8 +10,9 @@ class UserPermission(BasePermission):
     собственного профиля.
     Неавторизованным пользователям запрещены все операции.
     """
+
     def has_permission(self, request, view):
-        return request.user.is_authenticated
+        return request.user.is_authenticated or request.user.is_active
 
     def has_object_permission(self, request, view, obj):
 

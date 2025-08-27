@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password, check_password
-from users.models import UserModel
+from users.models import UserModel, Role
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -45,6 +45,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
             last_name=validated_data.get("last_name"),
             email=validated_data.get("email"),
             password=password,
+            role=Role.objects.last(),
         )
         return user
 
@@ -118,9 +119,8 @@ class UserChangePasswordSerializer(serializers.ModelSerializer):
         if not user.check_password(password):
             raise serializers.ValidationError("Неверный пароль")
         return data
-    
+
     def update(self, instance, validated_data):
         instance.set_password(validated_data.get("new_password"))
         instance.save()
         return instance
-

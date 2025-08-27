@@ -7,10 +7,11 @@ PRICE_DECIMAL_PLACES = 2
 USER = "user"
 MODERATOR = "moderator"
 ADMIN = "admin"
-USERS_ROLE = (
-    (USER, "Пользователь"),
-    (MODERATOR, "Модератор"),
-    (ADMIN, "Администратор"),
-)
+USERS_ROLE = {
+    "Администратор": "admin",
+    "Менеджер": "manager",
+    "Пользователь": "user",
+}
+# ["Admin", "Moderator", "User", "Manager"]
 
 API_VERSION = "v1"

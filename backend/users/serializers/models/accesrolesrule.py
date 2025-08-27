@@ -5,7 +5,8 @@ from rest_framework.serializers import ValidationError
 
 class AccessShowSerializer(serializers.ModelSerializer):
     """Сериализатор отображения уровня доступа текущего пользователя."""
-
+    role = serializers.StringRelatedField()
+    element = serializers.StringRelatedField()
     rules = serializers.SerializerMethodField()
 
     class Meta:
