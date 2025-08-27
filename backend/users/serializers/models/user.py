@@ -86,8 +86,41 @@ class UserDeleteSerializer(serializers.ModelSerializer):
         return instance
 
 
-class UserLoginSerizlier(serializers.ModelSerializer):
+class UserShowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserModel
-        fields = ("id", "email", "password")
+        fields = ("id", "email", "first_name", "last_name", "role")
+
+
+class UserChangePasswordSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+    new_password = serializers.CharField(write_only=True)
+    repeat_password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = UserModel
+        fields = ("password", "new_password", "repeat_password")
+
+    def validate(self, data):
+        password = data.get("password")
+        new_password = data.get("new_password")
+        repeat_password = data.get("repeat_password")
+        if new_password != repeat_password:
+            raise ValidationError("Введите дважды одинаковый пароль")
+        try:
+            validate_password(new_password)
+        except ValidationError as e:
+            raise serializers.ValidationError(
+                {"Пароль не соответствует требования безопасности": list(e.messages)}
+            )
+        user = self.instance
+        if not user.check_password(password):
+            raise serializers.ValidationError("Неверный пароль")
+        return data
+    
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data.get("new_password"))
+        instance.save()
+        return instance
+

@@ -9,18 +9,13 @@ class UserModel(AbstractUser):
     """Кастомная модель пользователя."""
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["first_name", "last_name"]
+    REQUIRED_FIELDS = ["first_name", "last_name", "username"]
     email = models.EmailField(
         verbose_name="Адрес электронной почты",
         help_text="Введите адрес электронной почты",
         unique=True,
     )
-    role = models.ForeignKey(
-        "Role",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
+    role = models.ForeignKey("Role", on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
         verbose_name = "Пользователь"
@@ -34,6 +29,8 @@ class UserModel(AbstractUser):
 
 
 class Role(models.Model):
+    """Модель ролей пользователя."""
+
     name = models.CharField(
         max_length=NAME_MAX_LENGTH,
         verbose_name="Наименование роли",
@@ -53,7 +50,9 @@ class Role(models.Model):
         verbose_name_plural = "Роли"
 
 
-class BusinessElements(models.Model):
+class BusinessElement(models.Model):
+    """Модель бизнес-элементов проекта."""
+
     name = models.CharField(
         max_length=NAME_MAX_LENGTH,
         verbose_name="Наименование ресурса",
@@ -66,14 +65,23 @@ class BusinessElements(models.Model):
     )
     description = models.TextField(verbose_name="Описание ресурса")
 
+    class Meta:
+        verbose_name = "Бизнес-элемент"
+        verbose_name_plural = "Бизнес-элементы"
 
-class AccessRolesRules(models.Model):
+    def __str__(self):
+        return f"Модель: {self.slug}"
+
+
+class AccessRolesRule(models.Model):
+    """Модель уровня доступа."""
+
     role = models.ForeignKey(
         Role,
         on_delete=models.CASCADE,
     )
     element = models.ForeignKey(
-        BusinessElements,
+        BusinessElement,
         on_delete=models.CASCADE,
     )
     read_permission = models.BooleanField(
@@ -110,6 +118,8 @@ class AccessRolesRules(models.Model):
         verbose_name_plural = "Доступы"
 
     def __str__(self):
-        return (
-            f"Доступ роли '{self.role.name}' к объекту '{self.element.name}'."
-        )
+        return f"Доступ роли '{
+            self.role.name
+        }' к объекту '{
+            self.element.name
+        }'."
