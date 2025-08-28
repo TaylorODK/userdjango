@@ -8,6 +8,7 @@ USER = "user"
 MODERATOR = "moderator"
 ADMIN = "admin"
 USERS_ROLE = {
+    "Гость": "guest",
     "Администратор": "admin",
     "Менеджер": "manager",
     "Пользователь": "user",

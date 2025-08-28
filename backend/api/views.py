@@ -1,54 +1,21 @@
 from rest_framework import viewsets
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import RetrieveModelMixin, ListModelMixin, CreateModelMixin
-from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
-from drf_spectacular.utils import extend_schema
-from .models import Order, Product
-from .serializers import OrderSerializer, ProductSerializer
-from .schemas import (
-    order_content_schema,
-    product_content_schema,
-    product_create_schema,
-    order_create_schema,
-)
+from drf_spectacular.utils import extend_schema_view
+from api.models import Order, Product
+from api.permissions import AccessPermission
 
-# Create your views here.
+from api.serializers import OrderSerializer, ProductSerializer
 
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-
-    @order_create_schema
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
-
-    @order_content_schema
-    def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
+    permission_classes = (AccessPermission,)
 
 
-class ProductViewSet(RetrieveModelMixin, CreateModelMixin, ListModelMixin, GenericViewSet):
+class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-
-    def get_permissions(self):
-        if self.action == "create":
-            return [
-                IsAdminUser(),
-            ]
-        return [
-            AllowAny(),
-        ]
-
-    @product_content_schema
-    def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
-
-    @product_create_schema
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
-
-    @product_content_schema
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
+    permission_classes = (AccessPermission,)
+    lookup_field = "id"

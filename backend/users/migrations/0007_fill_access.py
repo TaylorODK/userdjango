@@ -22,31 +22,56 @@ def create_access(apps, schema_editor):
                     delete_permission=True,
                     delete_all_permission=True,
                 )
+            elif role.slug == "user" and element.slug == "product":
+                Access.objects.get_or_create(
+                    role=role,
+                    element=element,
+                    read_permission=True,
+                    read_all_permission=True,
+                    create_permission=False,
+                    update_permission=False,
+                    update_all_permission=False,
+                    delete_permission=False,
+                    delete_all_permission=False,
+                )
+            elif role.slug == "user" and element.slug == "order":
+                Access.objects.get_or_create(
+                    role=role,
+                    element=element,
+                    read_permission=True,
+                    read_all_permission=False,
+                    create_permission=True,
+                    update_permission=True,
+                    update_all_permission=False,
+                    delete_permission=True,
+                    delete_all_permission=False,
+                )
+            elif role.slug == "guest" and element.slug == "product":
+                Access.objects.get_or_create(
+                    role=role,
+                    element=element,
+                    read_permission=True,
+                    read_all_permission=True,
+                    create_permission=False,
+                    update_permission=False,
+                    update_all_permission=False,
+                    delete_permission=False,
+                    delete_all_permission=False,
+                )
             else:
-                if element.slug == "product":
-                    Access.objects.get_or_create(
-                        role=role,
-                        element=element,
-                        read_permission=True,
-                        read_all_permission=True,
-                        create_permission=False,
-                        update_permission=False,
-                        update_all_permission=False,
-                        delete_permission=False,
-                        delete_all_permission=False,
-                    )
-                else:
-                    Access.objects.get_or_create(
-                        role=role,
-                        element=element,
-                        read_permission=True,
-                        read_all_permission=False,
-                        create_permission=True,
-                        update_permission=True,
-                        update_all_permission=False,
-                        delete_permission=True,
-                        delete_all_permission=False,
-                    )
+                Access.objects.get_or_create(
+                    role=role,
+                    element=element,
+                    read_permission=False,
+                    read_all_permission=False,
+                    create_permission=False,
+                    update_permission=False,
+                    update_all_permission=False,
+                    delete_permission=False,
+                    delete_all_permission=False,
+                )
+
+
 
 
 class Migration(migrations.Migration):
