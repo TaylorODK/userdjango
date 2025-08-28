@@ -19,9 +19,6 @@ from users.serializers import (
     UserDeleteSerializer,
     UserUpdateSerializer,
     UserShowSerializer,
-    RoleSerializer,
-    BusinessElementSerializer,
-    AccessChangeSerializer,
     AccessShowSerializer,
 )
 from users.permissions import UserPermission
@@ -42,7 +39,21 @@ class UserViewSet(viewsets.ModelViewSet):
     """
 
     queryset = UserModel.objects.all()
-    serializer_class = UserShowSerializer
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return UserCreateSerializer
+        if self.action in ["me_page", "list", "retrieve"]:
+            return UserShowSerializer
+        if self.action == "me_update":
+            return UserUpdateSerializer
+        if self.action == "delete_user":
+            return UserDeleteSerializer
+        if self.action == "change_password":
+            return UserChangePasswordSerializer
+        if self.action == "me_permissions":
+            return AccessShowSerializer
+        return UserShowSerializer
 
     def get_permissions(self):
         if self.action == "create":
@@ -72,12 +83,12 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=False,
-        methods=["get", "patch"],
+        methods=["GET", "PATCH"],
         url_path="me",
     )
     def me_page(self, request):
         user = self.request.user
-        if request.method == "get":
+        if request.method == "GET":
             try:
                 serializer = UserShowSerializer(user)
             except Http404:
@@ -96,7 +107,9 @@ class UserViewSet(viewsets.ModelViewSet):
                 },
                 status=status.HTTP_200_OK,
             )
-        serializer = UserUpdateSerializer(user, data=request.data, partial=True)
+        serializer = UserUpdateSerializer(
+            user, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(
@@ -116,10 +129,12 @@ class UserViewSet(viewsets.ModelViewSet):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    @action(detail=False, methods=["patch"], url_path="me/delete")
+    @action(detail=False, methods=["PATCH"], url_path="me/delete")
     def delete_user(self, request):
         user = self.request.user
-        serializer = UserDeleteSerializer(user, data=request.data, partial=True)
+        serializer = UserDeleteSerializer(
+            user, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(
@@ -145,7 +160,9 @@ class UserViewSet(viewsets.ModelViewSet):
     )
     def change_password(self, request):
         user = self.request.user
-        serializer = UserChangePasswordSerializer(user, data=request.data, partial=True)
+        serializer = UserChangePasswordSerializer(
+            user, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(
@@ -162,7 +179,9 @@ class UserViewSet(viewsets.ModelViewSet):
         )
 
     @action(
-        detail=False, methods=["GET"], url_path=r"me/permissions/(?P<model_name>[^/.]+)"
+        detail=False,
+        methods=["GET"],
+        url_path=r"me/permissions/(?P<model_name>[^/.]+)"
     )
     def me_permissions(self, request, model_name):
         user = self.request.user
@@ -172,7 +191,10 @@ class UserViewSet(viewsets.ModelViewSet):
             )
         except AccessRolesRule.DoesNotExist:
             return Response(
-                {"Success": False, "Message": "Данные о правах доступа не обнаружены."}
+                {
+                    "Success": False,
+                    "Message": "Данные о правах доступа не обнаружены."
+                }
             )
         serializer = AccessShowSerializer(access)
         if serializer:

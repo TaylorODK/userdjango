@@ -13,6 +13,5 @@ USERS_ROLE = {
     "Менеджер": "manager",
     "Пользователь": "user",
 }
-# ["Admin", "Moderator", "User", "Manager"]
 
 API_VERSION = "v1"

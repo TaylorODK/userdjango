@@ -91,7 +91,7 @@ class UserShowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserModel
-        fields = ("id", "email", "first_name", "last_name", "role")
+        fields = ("id", "email", "first_name", "last_name")
 
 
 class UserChangePasswordSerializer(serializers.ModelSerializer):
