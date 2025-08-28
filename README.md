@@ -102,7 +102,8 @@ source venv/bin/activate
 6. Данные для авторизации в админке:
 - логин admn@mail.ru
 - пароль 123456
-
-
+7. Пример заполнения .env файла:
+DEBUG=True
+SECRET_KEY='django-insecure-xdreb-bul$(qx@*&flyg)m$ep$kx-4+@#ft%v+r@j$m7w^fhl='
 
 
