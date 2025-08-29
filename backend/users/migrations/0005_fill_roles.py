@@ -13,7 +13,7 @@ def create_roles(apps, schema_editor):
         Role.objects.get_or_create(
             name=model_name,
             slug=model_slug.lower(),
-            defaults={"description": f"Роль {model_name}"}
+            defaults={"description": f"Роль {model_name}"},
         )
 
 

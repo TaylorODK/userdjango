@@ -28,12 +28,18 @@ class UserCreateSerializer(serializers.ModelSerializer):
         password = data.get("password")
         repeat_password = data.get("repeat_password")
         if password != repeat_password:
-            raise serializers.ValidationError("Введите дважды одинаковый пароль")
+            raise serializers.ValidationError(
+                "Введите дважды одинаковый пароль"
+            )
         try:
             validate_password(password)
         except ValidationError as e:
             raise serializers.ValidationError(
-                {"Пароль не соответствует требования безопасности": list(e.messages)}
+                {
+                    "Пароль не соответствует требования безопасности": list(
+                        e.messages
+                    )
+                }
             )
         return data
 
@@ -113,7 +119,11 @@ class UserChangePasswordSerializer(serializers.ModelSerializer):
             validate_password(new_password)
         except ValidationError as e:
             raise serializers.ValidationError(
-                {"Пароль не соответствует требования безопасности": list(e.messages)}
+                {
+                    "Пароль не соответствует требования безопасности": list(
+                        e.messages
+                    )
+                }
             )
         user = self.instance
         if not user.check_password(password):

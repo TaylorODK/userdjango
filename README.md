@@ -7,6 +7,7 @@
 ### UserModel - пользователь
 Кастомный пользователь для проекта. Аутентификация проходит через поле email.
 Для создания пользователя необходимо отправить post-запрос на адрес `api/v1/users/`
+<p>
 Пример запроса:
 ```
     {   
@@ -18,6 +19,7 @@
     }
 ```
 Для аутентификации на сайте необходимо отправить post-запрос на адрес `api/v1/users/auth/login/`
+<p>
 Пример запроса:
 ```
     {
@@ -25,6 +27,7 @@
         "password": "string"
     }
 ```
+<p>
 Пример ответа
 ```
     {
@@ -37,6 +40,7 @@
 Доступные операции с профилем:
 - просмотр профиля `/api/v1/users/me/` (get-запрос)
 - изменение данных профиля `/api/v1/users/me/` (patch-запрос)
+<p>
 Пример запроса:
 ```
     {
@@ -46,6 +50,7 @@
     }
 ```
 - изменение пароля `/api/v1/users/me/change-password/` (patch-запрос)
+<p>
 Пример запроса:
 ```
     {
@@ -55,6 +60,7 @@
     }
 ```
 - удаление аккаунта `/api/v1/users/me/delete/ `(patch-запрос)
+<p>
 Пример запроса:
 ```
     {
@@ -66,10 +72,10 @@
 В папке backend/fixtues/ добавлен файл users.json для заполнения тестовыми данными (5 пользователей, 5 менеджеров (пароль "A1!23456" без кавычек))
 ### Role - система ролей пользователя:
 По умолчанию предусмотрены следующие роли для пользователей:
-- **"Гость"**: "guest"
-- **"Администратор"**: "admin"
-- **"Менеджер"**: "manager"
-- **"Пользователь"**: "user"
+- "Гость": "guest"
+- "Администратор": "admin"
+- "Менеджер": "manager"
+- "Пользователь": "user"
 Данные роли автоматически занесены в таблицу Role с помощью миграций.
 Администратору доступно создание дополнительных ролей в админке.
 ### BusinessElement - элементы проекта
@@ -114,35 +120,70 @@
 - удаление заказа по id `api/v1/order/{id}/` delete-запрос
 В папке backend/fixtues/ добавлен файл order.json для заполнения тестовыми данными (5 заказов)
 
-## Установка и запуск проекта
-```
+## Установка и локальный запуск проекта с PostgreSQL:
+
 1. Клонируйте репозиторий через Git
 cd <ваша директория, в которую вы хотите разместить проект>
 git clone <SSH-ключ данного репозитория>
 2. Создайте виртуальное окружение и активируйте его
-Windows
+**Windows**
+```bash
 python -m venv venv
+```
+```bash
 source venv/Scripts/activate
-Linux/macOS
+```
+**Linux/macOS**
+```bash
 python3 -m venv venv
+```
+```bash
 source venv/bin/activate
+```
 3. Установите зависимости
+```bash
 pip install -r backend/requirement.txt
-4. В настоящее время база данных реализована через sqlite3. В будущем будет дополнительно реализован переход на Postgres.
-5. Для локального запуска проекта необходимо выполнить следующие команды:
-- cd backend/
-- python manage.py migrate
-6. Добавление тестовых данных (фикстур) по одной в следующем порядке:
-- python manage.py loaddata fixtures/users.json 
-- python manage.py loaddata fixtures/products.json 
-- python manage.py loaddata fixtures/order.json 
-- python manage.py runserver
-7. Данные для авторизации в админке:
+```
+4. Для локального запуска проекта необходимо выполнить следующие команды:
+```bash
+cd backend/
+```
+```bash
+python manage.py migrate
+```
+5. Добавление тестовых данных (фикстур) по одной в следующем порядке:
+```bash
+python manage.py loaddata fixtures/users.json 
+python manage.py loaddata fixtures/products.json 
+python manage.py loaddata fixtures/orders.json 
+```
+Также можно загрузить все фикстуры разом командой:
+```bash
+python manage.py loaddata fixtures/users.json fixtures/products.json fixtures/orders.json
+```
+```bash
+python manage.py runserver
+```
+6. Данные для авторизации в админке:
 - логин admn@mail.ru
 - пароль 123456
-8. Пример заполнения .env файла:
+7. Пример заполнения .env файла:
+```bash
 DEBUG=True
 SECRET_KEY='django-insecure-xdreb-bul$(qx@*&flyg)m$ep$kx-4+@#ft%v+r@j$m7w^fhl='
+POSTGRES_DB=userdjango_db
+POSTGRES_USER=userdjango_user
+POSTGRES_PASSWORD=userdjango_password
+POSTGRES_HOST=localhost
 ```
 
+Список фикстур:
+- `orders.json`
+- `products.json`
+- `users.json`
+
+Форматирование кода
+```bash
+black {source_file_or_directory}
+```
 

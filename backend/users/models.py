@@ -20,7 +20,9 @@ class UserModel(AbstractUser):
         max_length=NAME_MAX_LENGTH,
         unique=False,
     )
-    role = models.ForeignKey("Role", on_delete=models.SET_NULL, null=True, blank=True)
+    role = models.ForeignKey(
+        "Role", on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     class Meta:
         verbose_name = "Пользователь"
@@ -28,8 +30,7 @@ class UserModel(AbstractUser):
 
         constraints = [
             models.UniqueConstraint(
-                fields=('username', 'email'),
-                name='unique_user'
+                fields=("username", "email"), name="unique_user"
             )
         ]
 

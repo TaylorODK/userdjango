@@ -16,7 +16,7 @@ def create_superuser(apps, schema_editor):
         password=make_password("123456"),
         is_staff=True,
         is_superuser=True,
-        role_id=role.id
+        role_id=role.id,
     )
 
 

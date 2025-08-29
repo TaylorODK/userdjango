@@ -34,7 +34,9 @@ class OrderSerializer(serializers.ModelSerializer):
     def validate(self, data):
         date_order = data.get("date_order")
         if date_order and datetime.date.today() > date_order:
-            raise serializers.ValidationError("Нельзя выбрать дату заказа в прошлом.")
+            raise serializers.ValidationError(
+                "Нельзя выбрать дату заказа в прошлом."
+            )
         return data
 
     def create(self, validated_data):

@@ -72,8 +72,6 @@ def create_access(apps, schema_editor):
                 )
 
 
-
-
 class Migration(migrations.Migration):
 
     dependencies = [

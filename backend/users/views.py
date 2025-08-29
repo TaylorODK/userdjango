@@ -1,18 +1,9 @@
 from django.http import Http404
-from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
-from rest_framework.mixins import (
-    CreateModelMixin,
-    RetrieveModelMixin,
-    UpdateModelMixin,
-    ListModelMixin,
-)
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.serializers import ValidationError
-from rest_framework.viewsets import GenericViewSet
-from users.models import UserModel, BusinessElement, Role, AccessRolesRule
+from users.models import UserModel, AccessRolesRule
 from users.serializers import (
     UserChangePasswordSerializer,
     UserCreateSerializer,
@@ -138,10 +129,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             serializer.save()
             return Response(
-                {
-                    "Success": True,
-                    "Message": "Пользователь удален."
-                },
+                {"Success": True, "Message": "Пользователь удален."},
                 status=status.HTTP_200_OK,
             )
         return Response(
@@ -181,7 +169,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(
         detail=False,
         methods=["GET"],
-        url_path=r"me/permissions/(?P<model_name>[^/.]+)"
+        url_path=r"me/permissions/(?P<model_name>[^/.]+)",
     )
     def me_permissions(self, request, model_name):
         user = self.request.user
@@ -193,7 +181,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(
                 {
                     "Success": False,
-                    "Message": "Данные о правах доступа не обнаружены."
+                    "Message": "Данные о правах доступа не обнаружены.",
                 }
             )
         serializer = AccessShowSerializer(access)

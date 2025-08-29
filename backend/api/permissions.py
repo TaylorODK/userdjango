@@ -14,9 +14,7 @@ def check_permission_for_current_user(request, view):
     else:
         role = user.role
     try:
-        return AccessRolesRule.objects.get(
-            role=role, element__slug=element
-        )
+        return AccessRolesRule.objects.get(role=role, element__slug=element)
     except AccessRolesRule.DoesNotExist:
         return None
 

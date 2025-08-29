@@ -25,7 +25,9 @@ class Product(AutoSlugMixin, models.Model):
         verbose_name="Слаг продукта",
         help_text="Слаг автоматически генерируется на основании поля name",
     )
-    description = models.TextField(blank=True, verbose_name="Описание продукта")
+    description = models.TextField(
+        blank=True, verbose_name="Описание продукта"
+    )
     price = models.DecimalField(
         blank=False,
         verbose_name="Стоимость продукта",
@@ -51,7 +53,9 @@ class Order(models.Model):
         help_text="Укажите дату заказа в формате DD.MM.YYYY",
         default=NOW,
     )
-    products = models.ManyToManyField(Product, blank=False, verbose_name="Продукты")
+    products = models.ManyToManyField(
+        Product, blank=False, verbose_name="Продукты"
+    )
 
     class Meta:
         verbose_name = "Заказ"
