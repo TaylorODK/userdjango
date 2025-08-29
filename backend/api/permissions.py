@@ -31,9 +31,13 @@ class AccessPermission(permissions.BasePermission):
         if not access:
             return False
         if request.method in SAFE_METHODS:
-            return access.read_all_permission
+            return access.read_all_permission or access.read_permission
         if request.method == "POST":
             return access.create_permission
+        elif request.method in ("PATCH", "PUT"):
+            return access.update_permission or access.update_all_permission
+        elif request.method == "DELETE":
+            return access.delete_permission or access.delete_all_permission
         return False
 
     def has_object_permission(self, request, view, obj):
